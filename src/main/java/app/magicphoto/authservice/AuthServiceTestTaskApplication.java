@@ -40,15 +40,15 @@ public class AuthServiceTestTaskApplication {
                 .build();
     }
 
-//    @Bean
-//    CommandLineRunner demoData(RoleRepository roleRepo) {
-//        return (args) -> {
-//            Role roleUser = new Role("ROLE_USER");
-//            roleRepo.save(roleUser);
-//            Role roleAdmin = new Role("ROLE_ADMIN");
-//            roleRepo.save(roleAdmin);
-//        };
-//
-//    }
+    @Bean
+    CommandLineRunner demoData(RoleRepository roleRepo) {
+        return (args) -> {
+            Role roleUser = new Role("ROLE_USER");
+            roleRepo.save(roleUser);
+            Role roleAdmin = new Role("ROLE_ADMIN");
+            roleRepo.save(roleAdmin);
+        };
+
+    }
 
 }
