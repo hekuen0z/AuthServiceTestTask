@@ -4,19 +4,22 @@ import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.dto.JwtResponse;
 import app.magicphoto.authservice.dto.SignInWithCodeDTO;
 import app.magicphoto.authservice.dto.SignInWithPasswordDTO;
-import app.magicphoto.authservice.model.CustomUser;
 import app.magicphoto.authservice.service.JwtService;
 import app.magicphoto.authservice.service.UserService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,10 +46,9 @@ public class LoginController {
     description = "Принимает логин/пароль в формате JSON и возвращает статус OK в случае успешной авторизации." +
             " При возникновении ошибок отправляет AuthenticationErrorResponse.")
     @PostMapping(value = "/password")
-    public ResponseEntity<JwtResponse> authenticateUserWithPassword(
+    public ResponseEntity<JwtResponse> authenticateUserWithPassword(@Validated
             @RequestBody @Parameter(description = "Логин/пароль в формате JSON") SignInWithPasswordDTO userDTO) {
-        UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken
-                .unauthenticated(userDTO.getLogin(), userDTO.getPassword());
+        var token = UsernamePasswordAuthenticationToken.unauthenticated(userDTO.getLogin(), userDTO.getPassword());
         performManualAuthentication(token);
 
 
@@ -58,9 +60,9 @@ public class LoginController {
             description = "Принимает код доступа в формате JSON и возвращает статус OK в случае успешной авторизации." +
                     " При возникновении ошибок отправляет AuthenticationErrorResponse.")
     @PostMapping(value = "/access_code")
-    public ResponseEntity<JwtResponse> authenticateUserWithAccessCode(
+    public ResponseEntity<JwtResponse> authenticateUserWithAccessCode(@Validated
             @RequestBody @Parameter(description = "Пользовательский код доступа в формате JSON") SignInWithCodeDTO userDTO) {
-        AccessCodeAuthenticationToken token = AccessCodeAuthenticationToken
+        var token = AccessCodeAuthenticationToken
                 .unauthenticated(null, userDTO.getAccessCode());
         performManualAuthentication(token);
 
@@ -76,7 +78,7 @@ public class LoginController {
     }
 
     private JwtResponse createJwtResponse() {
-        CustomUser user = userService.findAuthenticatedUser(SecurityContextHolder.getContext().getAuthentication());
+        var user = userService.findAuthenticatedUser(SecurityContextHolder.getContext().getAuthentication());
         String jwtToken = jwtService.generateToken(user);
 
         return new JwtResponse(jwtToken, jwtService.getJwtExpirationTime());

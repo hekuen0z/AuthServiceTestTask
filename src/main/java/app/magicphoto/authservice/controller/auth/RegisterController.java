@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +34,7 @@ public class RegisterController {
 
     @Autowired
     public RegisterController(RoleService roleService, UserService userService,
-                              CustomUserAndUserDtoMapper mapper, PasswordEncoder passwordEncoder) {
+                              CustomUserAndUserDtoMapper mapper) {
         this.roleService = roleService;
         this.userService = userService;
         this.mapper = mapper;
@@ -46,8 +45,9 @@ public class RegisterController {
                     "возвращает статус OK при предоставлении корректных данных и успешного добавления в БД." +
                     " При возникновении ошибок отправляет AuthenticationErrorResponse/ValidationErrorResponse.")
     @PostMapping
-    public ResponseEntity<String> registerUser(@Validated @RequestBody
-                                                   @Parameter(description = "SignUpDTO для создания пользователя в системе") UserDTO userDTO) {
+    public ResponseEntity<String> registerUser(
+            @Validated@RequestBody @Parameter(description = "SignUpDTO для создания пользователя в системе") UserDTO userDTO) {
+
         if(userService.existsByLogin(userDTO.getLogin())) {
             log.error("Specified login is already exist: " + userDTO.getLogin());
             throw new BadCredentialsException("Specified login is already exist!");

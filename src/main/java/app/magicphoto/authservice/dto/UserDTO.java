@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Сущность пользователя")
 public class UserDTO {
 
-    @NotBlank
-    @Size(min = 3, max = 50, message = "login must be from 3 to 50 characters length inclusive!")
+    @NotBlank(message = "The login cannot be blank!")
+    @Size(min = 3, max = 50, message = "Login must be from 3 to 50 characters length inclusive!")
     private String login;
 
-    @NotBlank
+    @NotBlank(message = "The password cannot be blank!")
     @Size(min = 8, message = "Password must be 8 characters or more!")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "Access code cannot be blank!")
     @Size(min = 8, message = "Access code must be 8 characters or more!")
     private String accessCode;
 }

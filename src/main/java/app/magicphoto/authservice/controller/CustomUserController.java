@@ -2,7 +2,6 @@ package app.magicphoto.authservice.controller;
 
 import app.magicphoto.authservice.dto.IdDTO;
 import app.magicphoto.authservice.dto.UserDTO;
-import app.magicphoto.authservice.model.CustomUser;
 import app.magicphoto.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +28,7 @@ public class CustomUserController {
     @Operation(summary = "Возвращает уникальный идентификатор авторизированного пользователя")
     @GetMapping
     public IdDTO viewInfoAboutUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
         Long id = userService.findAuthenticatedUser(auth).getId();
 
         return new IdDTO(id);
@@ -41,8 +39,8 @@ public class CustomUserController {
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeUserData(@Valid @RequestBody UserDTO userDTO) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUser currentUser = userService.findAuthenticatedUser(auth);
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var currentUser = userService.findAuthenticatedUser(auth);
 
         currentUser.setLogin(userDTO.getLogin());
         currentUser.setPassword(userDTO.getPassword());
@@ -56,7 +54,7 @@ public class CustomUserController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var auth = SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = userService.findAuthenticatedUser(auth).getId();
 
         userService.deleteUserById(currentUserId);
