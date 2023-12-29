@@ -7,7 +7,10 @@ import io.jsonwebtoken.security.SignatureException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,9 +25,29 @@ public class AuthenticationErrorHandlingControllerAdvice {
     @Operation(summary = "Метод для обработки AuthenticationErrorResponse.")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public AuthenticationErrorResponse onAuthenticationException(AuthenticationException e) {
-        return new AuthenticationErrorResponse(
-                HttpStatus.UNAUTHORIZED.toString(), e.getMessage()
-        );
+        AuthenticationErrorResponse response = null;
+
+        if (e instanceof BadCredentialsException) {
+            response = new AuthenticationErrorResponse(
+                    HttpStatus.BAD_REQUEST.toString(), "Bad credentials: " + e.getMessage());
+        }
+
+        if (e instanceof AccountStatusException) {
+            response = new AuthenticationErrorResponse(
+                    HttpStatus.FORBIDDEN.toString(), e.getMessage());
+        }
+
+        if (e instanceof UsernameNotFoundException) {
+            response = new AuthenticationErrorResponse(
+                    HttpStatus.BAD_REQUEST.toString(), e.getMessage());
+        }
+
+        if(response == null) {
+            response = new AuthenticationErrorResponse(
+                HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
+        }
+
+        return response;
     }
 
     @ResponseBody
