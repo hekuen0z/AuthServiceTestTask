@@ -1,7 +1,7 @@
 package app.magicphoto.authservice.controller;
 
-import app.magicphoto.authservice.dto.IdDTO;
-import app.magicphoto.authservice.dto.UserDTO;
+import app.magicphoto.authservice.model.dto.IdDTO;
+import app.magicphoto.authservice.model.dto.UserDTO;
 import app.magicphoto.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +49,10 @@ public class CustomUserController {
         userService.save(currentUser);
     }
 
+    /**
+     * The deleteUser function is responsible for deleting the currently authenticated user from the database.
+     * It also removes all data about this user from the authentication context.
+     */
     @Operation(summary = "Удаление авторизированного пользователя",
     description = "Метод выполняет удаление авторизованного пользователя из БД, а также удаляет данные о нем из контекста авторизации.")
     @DeleteMapping
@@ -62,4 +66,5 @@ public class CustomUserController {
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 
+    //TODO Сделать аннотацию, чтобы проверять аутентифицирован ли пользователь.
 }

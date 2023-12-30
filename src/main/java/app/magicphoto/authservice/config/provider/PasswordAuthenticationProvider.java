@@ -1,7 +1,7 @@
 package app.magicphoto.authservice.config.provider;
 
-import app.magicphoto.authservice.model.CustomUser;
-import app.magicphoto.authservice.model.Role;
+import app.magicphoto.authservice.model.dao.CustomUser;
+import app.magicphoto.authservice.model.dao.Role;
 import app.magicphoto.authservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

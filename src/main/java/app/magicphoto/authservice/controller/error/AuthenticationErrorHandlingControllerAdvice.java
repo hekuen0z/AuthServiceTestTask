@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.SignatureException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 @Tag(name = "Контроллер для обработки ошибок авторизации")
@@ -45,6 +47,28 @@ public class AuthenticationErrorHandlingControllerAdvice {
         if(response == null) {
             response = new AuthenticationErrorResponse(
                 HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
+        }
+
+        return response;
+    }
+
+    @ResponseBody
+    @ExceptionHandler(RuntimeException.class)
+    @Operation(summary = "Метод для обработки глобальных исключений ")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public AuthenticationErrorResponse onRuntimeException(RuntimeException e) {
+        AuthenticationErrorResponse response = null;
+
+        if (e instanceof AccessDeniedException) {
+            response = new AuthenticationErrorResponse(
+                    HttpStatus.FORBIDDEN.toString(), e.getMessage() + " " + e.getCause());
+        }
+
+        if(e instanceof ResponseStatusException) {
+            ResponseStatusException ex = (ResponseStatusException) e;
+
+            response = new AuthenticationErrorResponse(
+                    ex.getStatusCode().toString(), ex.getReason());
         }
 
         return response;

@@ -1,6 +1,6 @@
 package app.magicphoto.authservice;
 
-import app.magicphoto.authservice.model.Role;
+import app.magicphoto.authservice.model.dao.Role;
 import app.magicphoto.authservice.repository.RoleRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

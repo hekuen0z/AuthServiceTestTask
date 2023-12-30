@@ -1,6 +1,6 @@
 package app.magicphoto.authservice.repository;
 
-import app.magicphoto.authservice.model.Role;
+import app.magicphoto.authservice.model.dao.Role;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

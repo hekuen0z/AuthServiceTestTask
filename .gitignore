@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/logsOfAuthService.log
+/logsOfAuthService.log.2023-12-28.0.gz

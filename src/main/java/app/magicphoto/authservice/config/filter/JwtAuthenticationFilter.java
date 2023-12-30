@@ -1,6 +1,6 @@
 package app.magicphoto.authservice.config.filter;
 
-import app.magicphoto.authservice.model.CustomUser;
+import app.magicphoto.authservice.model.dao.CustomUser;
 import app.magicphoto.authservice.service.JwtService;
 import app.magicphoto.authservice.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -55,8 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
             if(userLogin != null && auth == null) {
-                CustomUser user = userService.findUserByLogin(userLogin).orElseThrow(
-                        () -> new BadCredentialsException("Specify login does not exists!"));
+                CustomUser user = userService.findUserByLogin(userLogin)
+                        .orElseThrow(() -> new BadCredentialsException("Specify login does not exists!"));
 
                 if(jwtService.isTokenValid(jwt, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -76,6 +76,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * The shouldNotFilter function is used to determine if the filter should be applied.
+     * In this case, we are using it to prevent the filter from being applied when a user
+     * attempts to log in. This is because we don't want users who have not yet logged in
+     * (and therefore do not have an authorization token) from being blocked by our JWT filter.
+     *
+     * @param HttpServletRequest request Get the request object
+     *
+     * @return True if the request path starts with /api/login
+     *
+     * @author Trelent
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return request.getServletPath().startsWith("/api/login/");

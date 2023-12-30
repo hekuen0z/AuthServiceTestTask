@@ -1,7 +1,7 @@
-package app.magicphoto.authservice.dto.mapper;
+package app.magicphoto.authservice.model.dto.mapper;
 
-import app.magicphoto.authservice.dto.UserDTO;
-import app.magicphoto.authservice.model.CustomUser;
+import app.magicphoto.authservice.model.dao.CustomUser;
+import app.magicphoto.authservice.model.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

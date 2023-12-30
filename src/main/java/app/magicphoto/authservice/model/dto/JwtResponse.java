@@ -1,4 +1,4 @@
-package app.magicphoto.authservice.dto;
+package app.magicphoto.authservice.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

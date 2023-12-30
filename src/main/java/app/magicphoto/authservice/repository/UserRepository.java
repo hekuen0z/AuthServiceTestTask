@@ -1,6 +1,6 @@
 package app.magicphoto.authservice.repository;
 
-import app.magicphoto.authservice.model.CustomUser;
+import app.magicphoto.authservice.model.dao.CustomUser;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

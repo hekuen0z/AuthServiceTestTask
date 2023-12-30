@@ -11,4 +11,5 @@ public class AuthenticationErrorResponse {
 
     private final String httpCode;
     private final String message;
+
 }

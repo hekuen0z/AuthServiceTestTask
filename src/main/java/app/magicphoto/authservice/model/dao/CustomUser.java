@@ -1,4 +1,4 @@
-package app.magicphoto.authservice.model;
+package app.magicphoto.authservice.model.dao;
 
 import jakarta.persistence.*;
 import lombok.Data;

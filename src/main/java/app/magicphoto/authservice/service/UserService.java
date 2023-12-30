@@ -1,11 +1,9 @@
 package app.magicphoto.authservice.service;
 
-import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
-import app.magicphoto.authservice.model.CustomUser;
+import app.magicphoto.authservice.model.dao.CustomUser;
 import app.magicphoto.authservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,21 +56,18 @@ public class UserService {
     }
 
     public CustomUser findAuthenticatedUser(Authentication auth) {
-        if(auth instanceof UsernamePasswordAuthenticationToken) {
-            Long id = (Long) auth.getPrincipal();
-            return findUserById(id).orElseThrow(
-                    () -> new UsernameNotFoundException("Authorized by login user does not exists!"));
-        } else if(auth instanceof AccessCodeAuthenticationToken) {
-            Long id = (Long) auth.getPrincipal();
-            return findUserById(id).orElseThrow(
-                    () -> new AuthenticationCredentialsNotFoundException("Authorized by access code user does not exists!"));
-        } else {
-            System.out.println("Auth: " + auth);
-            throw new AuthenticationCredentialsNotFoundException("Internal error of authentication");
-        }
+    if (auth.getPrincipal() instanceof Long id) {
+        return findUserById(id).orElseThrow(() -> new UsernameNotFoundException("Authorized user does not exist!"));
+    } else {
+        throw new AuthenticationCredentialsNotFoundException("Unknown authentication type");
     }
+}
+
 
     public void deleteUserById(Long id) {
+        if (!userRepo.existsById(id)) {
+            throw new IllegalArgumentException("User does not exist");
+        }
         userRepo.deleteById(id);
     }
 }

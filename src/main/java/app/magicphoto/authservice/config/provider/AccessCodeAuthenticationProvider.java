@@ -1,8 +1,8 @@
 package app.magicphoto.authservice.config.provider;
 
 import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
-import app.magicphoto.authservice.model.CustomUser;
-import app.magicphoto.authservice.model.Role;
+import app.magicphoto.authservice.model.dao.CustomUser;
+import app.magicphoto.authservice.model.dao.Role;
 import app.magicphoto.authservice.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

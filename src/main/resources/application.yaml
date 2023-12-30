@@ -23,7 +23,7 @@ logging:
     root: info
     org:
       springframework:
-        security: info
+        security: trace
 
 security:
   jwt:

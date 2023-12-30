@@ -1,6 +1,6 @@
 package app.magicphoto.authservice.service;
 
-import app.magicphoto.authservice.model.CustomUser;
+import app.magicphoto.authservice.model.dao.CustomUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
