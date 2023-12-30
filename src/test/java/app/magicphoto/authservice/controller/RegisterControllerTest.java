@@ -1,7 +1,7 @@
 package app.magicphoto.authservice.controller;
 
 import app.magicphoto.authservice.controller.auth.RegisterController;
-import app.magicphoto.authservice.dto.UserDTO;
+import app.magicphoto.authservice.model.dto.UserDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;

@@ -2,14 +2,12 @@ package app.magicphoto.authservice.controller;
 
 import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.controller.auth.LoginController;
-import app.magicphoto.authservice.dto.SignInWithCodeDTO;
-import app.magicphoto.authservice.dto.SignInWithPasswordDTO;
+import app.magicphoto.authservice.model.dto.SignInWithCodeDTO;
+import app.magicphoto.authservice.model.dto.SignInWithPasswordDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
@@ -33,9 +30,6 @@ public class LoginControllerTest {
 
     @Mock
     private AuthenticationManager authManager;
-
-    @Captor
-    private ArgumentCaptor<Authentication> authenticationArgumentCaptor;
 
     @Autowired
     private LoginController controller;
