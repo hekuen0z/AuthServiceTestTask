@@ -43,7 +43,7 @@ public class LoginController {
         var token = UsernamePasswordAuthenticationToken.unauthenticated(userDTO.getLogin(), userDTO.getPassword());
         performManualAuthentication(token);
 
-        log.info("User authenticated successfully with lgoin/password. Timestamp: " + LocalDateTime.now());
+        log.info("User authenticated successfully with login/password. Timestamp: " + LocalDateTime.now());
         return ResponseEntity.ok(createJwtResponse());
     }
 
