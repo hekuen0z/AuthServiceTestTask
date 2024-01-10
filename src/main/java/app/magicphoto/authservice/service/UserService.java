@@ -2,7 +2,8 @@ package app.magicphoto.authservice.service;
 
 import app.magicphoto.authservice.model.dao.CustomUser;
 import app.magicphoto.authservice.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,16 +13,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserService(UserRepository userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public Optional<CustomUser> findUserByLogin(String login) {
         return userRepo.findByLogin(login);
@@ -48,6 +44,9 @@ public class UserService {
     }
 
     public CustomUser save(CustomUser user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
         return userRepo.save(user);
     }
 
@@ -56,18 +55,18 @@ public class UserService {
     }
 
     public CustomUser findAuthenticatedUser(Authentication auth) {
-    if (auth.getPrincipal() instanceof Long id) {
-        return findUserById(id).orElseThrow(() -> new UsernameNotFoundException("Authorized user does not exist!"));
-    } else {
+        if (auth.getPrincipal() instanceof Long id) {
+            return findUserById(id).orElseThrow(() -> new UsernameNotFoundException("Authorized user does not exist!"));
+        }
+
         throw new AuthenticationCredentialsNotFoundException("Unknown authentication type");
     }
-}
-
 
     public void deleteUserById(Long id) {
-        if (!userRepo.existsById(id)) {
+        try {
+            userRepo.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
             throw new IllegalArgumentException("User does not exist");
         }
-        userRepo.deleteById(id);
     }
 }

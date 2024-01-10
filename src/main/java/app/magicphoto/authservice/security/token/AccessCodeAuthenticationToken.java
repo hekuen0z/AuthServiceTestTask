@@ -1,33 +1,36 @@
-package app.magicphoto.authservice.config.token;
+package app.magicphoto.authservice.security.token;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
 public class AccessCodeAuthenticationToken extends AbstractAuthenticationToken {
-    private Object principal;
-    private Object credentials;
+    private final Object principal;
+    private final Object credentials;
 
-    public AccessCodeAuthenticationToken(Object principal, Object credentials) {
+    public AccessCodeAuthenticationToken(@NonNull Object principal, @NonNull Object credentials) {
         super(null);
         this.principal = principal;
         this.credentials = credentials;
         this.setAuthenticated(false);
     }
 
-    public AccessCodeAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public AccessCodeAuthenticationToken(@NonNull Object principal, @NonNull Object credentials,
+                                         Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;
         super.setAuthenticated(true);
     }
 
-    public static AccessCodeAuthenticationToken unauthenticated(Object principal, Object credentials) {
+    public static AccessCodeAuthenticationToken unauthenticated(@NonNull Object principal,
+                                                                @NonNull Object credentials) {
         return new AccessCodeAuthenticationToken(principal, credentials);
     }
 
-    public static AccessCodeAuthenticationToken authenticated(Object principal, Object credentials,
+    public static AccessCodeAuthenticationToken authenticated(@NonNull Object principal, @NonNull Object credentials,
                                                               Collection<? extends GrantedAuthority> authorities) {
         return new AccessCodeAuthenticationToken(principal, credentials, authorities);
     }

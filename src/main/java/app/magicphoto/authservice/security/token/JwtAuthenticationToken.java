@@ -1,4 +1,4 @@
-package app.magicphoto.authservice.config.token;
+package app.magicphoto.authservice.security.token;
 
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -7,9 +7,15 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.security.auth.Subject;
 import java.util.Collection;
 
+/**
+ * Represents a JWT authentication token.
+ * <p>
+ * This token is used for JWT-based authentication and extends the AbstractAuthenticationToken class.
+ * It holds the principal and credentials for authentication purposes.
+ */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
-    private Object principal;
-    private Object credentials;
+    private final Object principal;
+    private final Object credentials;
 
     public JwtAuthenticationToken(Object principal, Object credentials) {
         super(null);

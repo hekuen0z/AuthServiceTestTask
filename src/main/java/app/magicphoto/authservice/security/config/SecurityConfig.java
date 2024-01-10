@@ -1,10 +1,10 @@
-package app.magicphoto.authservice.config;
+package app.magicphoto.authservice.security.config;
 
-import app.magicphoto.authservice.config.filter.JwtAuthenticationFilter;
-import app.magicphoto.authservice.config.provider.AccessCodeAuthenticationProvider;
-import app.magicphoto.authservice.config.provider.PasswordAuthenticationProvider;
 import app.magicphoto.authservice.error.security.CustomAuthenticationEntryPoint;
-import org.springframework.beans.factory.annotation.Autowired;
+import app.magicphoto.authservice.security.filter.JwtAuthenticationFilter;
+import app.magicphoto.authservice.security.provider.AccessCodeAuthenticationProvider;
+import app.magicphoto.authservice.security.provider.PasswordAuthenticationProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,24 +21,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AccessCodeAuthenticationProvider accessCodeAuthProvider;
-    private final PasswordAuthenticationProvider passwordAuthProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     private final CustomAuthenticationEntryPoint authEntryPoint;
-
-    @Autowired
-    public SecurityConfig(AccessCodeAuthenticationProvider accessCodeAuthProvider,
-                          PasswordAuthenticationProvider passwordAuthProvider,
-                          JwtAuthenticationFilter jwtAuthenticationFilter,
-                          CustomAuthenticationEntryPoint authEntryPoint) {
-        this.accessCodeAuthProvider = accessCodeAuthProvider;
-        this.passwordAuthProvider = passwordAuthProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.authEntryPoint = authEntryPoint;
-    }
 
     @Bean
     static PasswordEncoder passwordEncoder() {
@@ -46,7 +33,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager() {
+    AuthenticationManager authenticationManager(AccessCodeAuthenticationProvider accessCodeAuthProvider,
+                                                PasswordAuthenticationProvider passwordAuthProvider) {
         return new ProviderManager(passwordAuthProvider, accessCodeAuthProvider);
     }
 
@@ -55,10 +43,9 @@ public class SecurityConfig {
         http
                 .csrf((customCsrf) -> customCsrf.ignoringRequestMatchers(
                         "/api/register", "/api/login/**", "/api/info"))
-                .authorizeHttpRequests((auth) -> {
-                    auth.requestMatchers("/api/register", "/api/login/**").permitAll()
-                            .anyRequest().authenticated();
-                })
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/register", "/api/login/**").permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(authEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable);

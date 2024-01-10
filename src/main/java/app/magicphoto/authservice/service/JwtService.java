@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,8 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     @Getter
     private Long jwtExpirationTime;
+
+    private SecretKey signInKey;
 
     public String extractLogin(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -46,11 +48,12 @@ public class JwtService {
     private String buildToken(Map<String, Object> extraClaims,
                               CustomUser user,
                               Long expirationTime) {
+        var now=Instant.now();
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(user.getLogin())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusMillis(expirationTime)))
                 .signWith(getSignInKey())
                 .compact();
     }
@@ -71,14 +74,17 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parser()
-                .verifyWith((SecretKey) getSignInKey())
+                .verifyWith(getSignInKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private SecretKey getSignInKey() {
+        if (signInKey == null) {
+            byte[] keyBytes=Decoders.BASE64.decode(secretKey);
+            signInKey=Keys.hmacShaKeyFor(keyBytes);
+        }
+        return signInKey;
     }
 }

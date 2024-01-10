@@ -13,7 +13,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,76 +21,58 @@ import org.springframework.web.server.ResponseStatusException;
 @Tag(name = "Контроллер для обработки ошибок авторизации")
 public class AuthenticationErrorHandlingControllerAdvice {
 
-    @ResponseBody
     @ExceptionHandler(AuthenticationException.class)
     @Operation(summary = "Метод для обработки AuthenticationErrorResponse.")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public AuthenticationErrorResponse onAuthenticationException(AuthenticationException e) {
-        AuthenticationErrorResponse response = null;
+        AuthenticationErrorResponse response;
 
         if (e instanceof BadCredentialsException) {
             response = new AuthenticationErrorResponse(
-                    HttpStatus.BAD_REQUEST.toString(), "Bad credentials: " + e.getMessage());
-        }
-
-        if (e instanceof AccountStatusException) {
+                    HttpStatus.BAD_REQUEST.value(), "Bad credentials: " + e.getMessage());
+        } else if (e instanceof AccountStatusException) {
             response = new AuthenticationErrorResponse(
-                    HttpStatus.FORBIDDEN.toString(), e.getMessage());
-        }
-
-        if (e instanceof UsernameNotFoundException) {
+                    HttpStatus.FORBIDDEN.value(), e.getMessage());
+        } else if (e instanceof UsernameNotFoundException) {
             response = new AuthenticationErrorResponse(
-                    HttpStatus.BAD_REQUEST.toString(), e.getMessage());
-        }
-
-        if(response == null) {
+                    HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        } else {
             response = new AuthenticationErrorResponse(
-                HttpStatus.UNAUTHORIZED.toString(), e.getMessage());
+                    HttpStatus.UNAUTHORIZED.value(), e.getMessage());
         }
 
         return response;
     }
 
-    @ResponseBody
-    @ExceptionHandler(RuntimeException.class)
-    @Operation(summary = "Метод для обработки глобальных исключений ")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public AuthenticationErrorResponse onRuntimeException(RuntimeException e) {
-        AuthenticationErrorResponse response = null;
-
-        if (e instanceof AccessDeniedException) {
-            response = new AuthenticationErrorResponse(
-                    HttpStatus.FORBIDDEN.toString(), e.getMessage() + " " + e.getCause());
-        }
-
-        if(e instanceof ResponseStatusException) {
-            ResponseStatusException ex = (ResponseStatusException) e;
-
-            response = new AuthenticationErrorResponse(
-                    ex.getStatusCode().toString(), ex.getReason());
-        }
-
-        return response;
+    @ExceptionHandler(AccessDeniedException.class)
+    @Operation(summary = "Метод для обработки исключения AccessDeniedException")
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public AuthenticationErrorResponse onAccessDeniedException(AccessDeniedException e) {
+        return new AuthenticationErrorResponse(
+                HttpStatus.FORBIDDEN.value(), e.getMessage() + " " + e.getCause());
     }
 
-    @ResponseBody
+    @ExceptionHandler(ResponseStatusException.class)
+    @Operation(summary = "Метод для обработки исключения ResponseStatusException")
+    public AuthenticationErrorResponse onResponseStatusException(ResponseStatusException e) {
+        return new AuthenticationErrorResponse(
+                e.getStatusCode().value(), e.getReason());
+    }
+
     @ExceptionHandler(JwtException.class)
     @Operation(summary = "Метод для обработки JwtException.")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public AuthenticationErrorResponse onJwtValidationException(JwtException e) {
-        AuthenticationErrorResponse response = null;
+        AuthenticationErrorResponse response;
 
         if(e instanceof SignatureException) {
             response = new AuthenticationErrorResponse(
-                    HttpStatus.UNAUTHORIZED.toString(), "The JWT Signature is invalid");
-        }
-        if(e instanceof ExpiredJwtException) {
+                    HttpStatus.UNAUTHORIZED.value(), "The JWT Signature is invalid");
+        } else if (e instanceof ExpiredJwtException) {
             response = new AuthenticationErrorResponse(
-                    HttpStatus.UNAUTHORIZED.toString(), "The JWT token has expired");
-        }
-
-        if(response == null) {
-            response = new AuthenticationErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                    HttpStatus.UNAUTHORIZED.value(), "The JWT token has expired");
+        } else {
+            response=new AuthenticationErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     "Unknown internal JWT service error.");
         }
 
