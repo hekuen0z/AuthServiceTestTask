@@ -1,9 +1,9 @@
 package app.magicphoto.authservice.controller.auth;
 
-import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.model.dto.JwtResponse;
 import app.magicphoto.authservice.model.dto.SignInWithCodeDTO;
 import app.magicphoto.authservice.model.dto.SignInWithPasswordDTO;
+import app.magicphoto.authservice.security.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.service.JwtService;
 import app.magicphoto.authservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,12 +53,14 @@ public class LoginController {
     @PostMapping(value = "/access_code")
     public ResponseEntity<JwtResponse> authenticateUserWithAccessCode(@Validated @RequestBody SignInWithCodeDTO userDTO) {
 
-        var token = AccessCodeAuthenticationToken.unauthenticated(Optional.empty(), userDTO.getAccessCode());
+        AccessCodeAuthenticationToken token=AccessCodeAuthenticationToken.unauthenticated(Optional.empty(),
+                                                                                          userDTO.getAccessCode());
         performManualAuthentication(token);
 
         log.info("User authenticated successfully with access code.");
         return ResponseEntity.ok(createJwtResponse());
     }
+
 
     private void performManualAuthentication(Authentication token) {
         Authentication authUser = authManager.authenticate(token);
@@ -75,8 +77,6 @@ public class LoginController {
     private JwtResponse createJwtResponse() {
         var user = userService.findAuthenticatedUser(SecurityContextHolder.getContext().getAuthentication());
         String jwtToken = jwtService.generateToken(user);
-
-
 
         log.info("Generated JWT token: {}", jwtToken);
         return new JwtResponse(jwtToken, jwtService.getJwtExpirationTime());

@@ -1,10 +1,9 @@
-package app.magicphoto.authservice.config.provider;
+package app.magicphoto.authservice.security.provider;
 
 import app.magicphoto.authservice.model.dao.CustomUser;
 import app.magicphoto.authservice.model.dao.Role;
 import app.magicphoto.authservice.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,22 +13,25 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Configuration
+/**
+ * An implementation of the AuthenticationProvider interface for password-based authentication.
+ * <p>
+ * This provider authenticates the user based on the provided login and password.
+ * It retrieves the user from the UserService using the login, checks if the password matches,
+ * and creates a UsernamePasswordAuthenticationToken with the user's ID, credentials, and authorities.
+ */
+@RequiredArgsConstructor
+@Component
 public class PasswordAuthenticationProvider implements AuthenticationProvider {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public PasswordAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

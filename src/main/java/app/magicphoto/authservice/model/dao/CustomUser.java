@@ -26,14 +26,6 @@ public class CustomUser {
     @Column(name = "access_code", unique = true)
     private String accessCode;
 
-//    @CreationTimestamp
-//    @Column(updatable = false, name = "created_at")
-//    private Date createdAt;
-//
-//    @UpdateTimestamp
-//    @Column(name = "updated_at")
-//    private Date updatedAt;
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_role",

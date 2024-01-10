@@ -1,29 +1,34 @@
-package app.magicphoto.authservice.config.provider;
+package app.magicphoto.authservice.security.provider;
 
-import app.magicphoto.authservice.config.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.model.dao.CustomUser;
 import app.magicphoto.authservice.model.dao.Role;
+import app.magicphoto.authservice.security.token.AccessCodeAuthenticationToken;
 import app.magicphoto.authservice.service.UserService;
-import org.springframework.context.annotation.Configuration;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Configuration
+/**
+ * An implementation of the AuthenticationProvider interface for access code authentication.
+ * <p>
+ * This provider authenticates the user based on the access token provided in the authentication object.
+ * It retrieves the user from the UserService using the access token and creates an AccessCodeAuthenticationToken
+ * with the user's ID, credentials, and authorities.
+ */
+@RequiredArgsConstructor
+@Component
 public class AccessCodeAuthenticationProvider implements AuthenticationProvider {
 
     private final UserService userService;
-
-    public AccessCodeAuthenticationProvider(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
